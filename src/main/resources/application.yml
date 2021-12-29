@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  freemarker:
+    prefix: classpath:/templates/
+  mvc:
+    servlet:
+      load-on-startup: 0
+
+jndi:
+  type: ldap
+  ip: 192.168.0.144
+  ldap:
+    port: 1389
+    base: dc=example,dc=com
+  rmi:
+    port: 1099
+
+source:
+  java-path: /home/xiefeihong/Download/jndi/java/
+  class-path: /home/xiefeihong/Download/jndi/java/
