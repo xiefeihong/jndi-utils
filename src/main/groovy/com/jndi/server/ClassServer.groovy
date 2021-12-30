@@ -17,9 +17,6 @@ class ClassServer {
     @Value('${spring.freemarker.prefix}')
     String ftlPath
 
-    @Value('${jndi.ip}')
-    String ip
-
     @Value('${source.java-path}')
     String javaPath
 
@@ -32,11 +29,10 @@ class ClassServer {
     @Autowired
     TemplateUtils templateUtils
 
-    byte[] getClassBytesByTemplate(String ftlName) {
-        def map = [ip: ip, result: 'hello']
-        log.info(map.values().join(': '))
+    byte[] getClassBytesByTemplate(String ftlName, Map<String, String> args) {
+        log.info(args.values().join(': '))
         def javaName = ftlName - '.ftl'
-        templateUtils.analysis(ftlName, javaPath + javaName, map)
+        templateUtils.analysis(ftlName, javaPath + javaName, args)
         def classFilePath = classPath + ftlName.replaceFirst('.java.ftl', '.class')
         classUtils.compiler(javaPath + javaName, classPath)
         templateUtils.getClassBytes(classFilePath)

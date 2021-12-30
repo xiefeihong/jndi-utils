@@ -12,7 +12,7 @@ class ClassServerTest {
 
     @Test
     void getClassBytesByTemplate() {
-        classServer.getClassBytesByTemplate('')
+        classServer.getClassBytesByTemplate('', null)
     }
 
     @Test

