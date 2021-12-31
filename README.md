@@ -8,7 +8,6 @@ https://github.com/mbechler/marshalsec.git
 ###构建
 ```
 ./gradlew build -x test
-java -jar build/libs/jndi-utils-0.0.1-SNAPSHOT.jar
 ```
 ###使用
 ```
