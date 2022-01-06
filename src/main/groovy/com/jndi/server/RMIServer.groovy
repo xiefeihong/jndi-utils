@@ -26,8 +26,8 @@ class RMIServer implements JNDIServer {
 
     @Override
     void run(String... args) throws Exception {
-//        System.setProperty('com.sun.jndi.ldap.object.trustURLCodebase', 'true')
-//        System.setProperty('com.sun.jndi.rmi.object.trustURLCodebase', 'true')
+        System.setProperty('com.sun.jndi.ldap.object.trustURLCodebase', 'true')
+        System.setProperty('com.sun.jndi.rmi.object.trustURLCodebase', 'true')
         LocateRegistry.createRegistry(port)
         def registry = LocateRegistry.getRegistry()
         def methods = jndiController.getClass().getDeclaredMethods()

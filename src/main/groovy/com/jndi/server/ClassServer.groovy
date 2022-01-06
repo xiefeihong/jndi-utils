@@ -33,7 +33,7 @@ class ClassServer {
         log.info(args.values().join(': '))
         def javaName = ftlName - '.ftl'
         templateUtils.analysis(ftlName, javaPath + javaName, args)
-        def classFilePath = classPath + ftlName.replaceFirst('.java.ftl', '.class')
+        def classFilePath = "${classPath}com/jndi/template/${ftlName.replaceFirst('.java.ftl', '.class')}"
         classUtils.compiler(javaPath + javaName, classPath)
         templateUtils.getClassBytes(classFilePath)
     }

@@ -24,8 +24,7 @@ class ClassUtils {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         def fileMgr = compiler.getStandardFileManager(null, null, null)
         def fileObj = fileMgr.getJavaFileObjects(javaFilePath)
-//        def options = ['-d', classFilePath]
-        def options = null
+        def options = ['-d', classFilePath]
         def task = compiler.getTask(null, fileMgr, null, options, null, fileObj)
         def success = task.call()
         if(!success){

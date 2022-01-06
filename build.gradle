@@ -5,8 +5,7 @@ plugins {
 }
 
 group = 'com.jndi'
-version = '0.0.1-SNAPSHOT'
-//sourceCompatibility = '11'
+version = '1.0'
 
 repositories {
     mavenCentral()
