@@ -1,5 +1,6 @@
 package com.jndi.utils
 
+import com.jndi.entity.Template
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,14 +13,9 @@ class TemplateUtilsTest {
 
     @Test
     void analysis() {
-        def ftlName = 'com.jndi.entity.EvilObj.java.ftl'
-        def map = [ip: '127.0.0.1', result: 'hello']
-        templateUtils.analysis(ftlName, null, map)
-    }
-
-    @Test
-    void getClassBytes() {
-        templateUtils.getClassBytes('com.jndi.entity.EvilObj.class')
+        def tempName = 'EvilObj.java.ftl'
+        def temp = new Template('EvilObj', 'hello', '127.0.0.1')
+        println templateUtils.analysis(tempName, temp)
     }
 
 }

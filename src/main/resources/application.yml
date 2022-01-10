@@ -16,7 +16,3 @@ jndi:
     base: dc=example,dc=com
   rmi:
     port: 1099
-
-source:
-  java-path: cache/java/
-  class-path: cache/class/

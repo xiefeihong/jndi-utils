@@ -1,5 +1,6 @@
 package com.jndi.controller
 
+import com.jndi.entity.Template
 import com.jndi.utils.JndiMapping
 import com.jndi.entity.Jndi
 import org.springframework.beans.factory.annotation.Value
@@ -20,17 +21,17 @@ class JndiController {
 
     @JndiMapping
     Jndi evil(){
-        new Jndi('evil', 'evilObj', 'com.jndi.template.EvilObj', url)
+        new Jndi('evil', 'EvilObj', url, new Template('EvilObj', 'hello', ip))
     }
 
     @JndiMapping
     Jndi base(){
-        new Jndi('base', 'baseObj', 'com.jndi.entity.BaseObj', url)
+        new Jndi('base', 'BaseObj', url, new Template('BaseObj'))
     }
 
     @JndiMapping
     Jndi hello(){
-        new Jndi('hello', 'nullObj', 'com.jndi.template.NullObj', url)
+        new Jndi('hello', 'NullObj', url, new Template('NullObj', 'hello'))
     }
 
 }

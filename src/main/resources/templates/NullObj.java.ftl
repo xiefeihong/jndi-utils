@@ -8,11 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 
-public class NullObj implements ObjectFactory {
+public class ${className} implements ObjectFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
-        return "${result}";
+        return "${message}";
     }
 
 }

